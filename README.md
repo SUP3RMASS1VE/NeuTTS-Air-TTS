@@ -1,145 +1,128 @@
----
+# 🎙️ NeuTTS Air - Voice Cloning TTS
 
-# 🎙️ NeuTTS Air – Voice Cloning TTS App
+A Gradio-based web interface for NeuTTS Air, enabling instant voice cloning and natural-sounding text-to-speech synthesis.
 
-NeuTTS Air is a **Gradio-based** web application that allows you to generate natural-sounding speech using **instant voice cloning**.
-You can provide a short reference audio clip and text to synthesize — the app will reproduce the same voice with new content.
+## Features
 
----
+- **Instant Voice Cloning**: Clone any voice with just 3-15 seconds of reference audio
+- **Auto-Transcription**: Automatic transcription of reference audio using Whisper
+- **Multiple Model Options**: Choose between Q4 (faster) or Q8 (higher quality) models
+- **Long Text Support**: Automatic text chunking with smooth crossfading for longer passages
+- **Seed Control**: Reproducible generation with optional seed parameter
+- **User-Friendly Interface**: Clean Gradio web UI with real-time status updates
 
-## 🚀 Features
+## Requirements
 
-* 🗣️ **Instant voice cloning** using [NeuTTS Air](https://huggingface.co/neuphonic)
-* 🔊 **Cross-platform support** (Windows, macOS, Linux)
-* ⚙️ **Model management** (download, initialize, unload)
-* 🤖 **Automatic speech transcription** using [OpenAI Whisper Tiny](https://github.com/openai/whisper)
-* 🎚️ **Quality/Speed trade-off** with Q4 and Q8 model variants
-* 🪄 **Chunked text processing** for long passages
-* 🎵 **Smooth audio blending** with crossfading between segments
-* 💬 **Interactive Gradio UI**
+- Python 3.8+
+- CUDA-capable GPU (recommended for best performance)
+- espeak-ng (for phonemization)
 
----
+## Installation
 
-## 🧰 Requirements
+### 1. Install espeak-ng
 
-### Python
-
-```
-Python 3.9 or later
-```
-
-### Install Dependencies
-
+**Windows:**
 ```bash
-pip install -r requirements.txt
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
-```
-
----
-
-## 🪄 Setup (Platform Specific)
-
-### 🪟 Windows
-
-NeuTTS uses **espeak-ng** via the `phonemizer` library.
-Install **espeak-ng** using one of the following:
-
-```bash
+# Using Chocolatey
 choco install espeak
-# or
+
+# Using Scoop
 scoop install espeak
 ```
 
-You can also manually download from:
-👉 [https://github.com/espeak-ng/espeak-ng/releases](https://github.com/espeak-ng/espeak-ng/releases)
-
-### 🍎 macOS
-
+**macOS:**
 ```bash
-brew install espeak
-# or
 brew install espeak-ng
 ```
 
-### 🐧 Linux
-
-Usually preinstalled; if not:
-
+**Linux:**
 ```bash
-sudo apt install espeak-ng
+sudo apt-get install espeak-ng
 ```
 
----
+### 2. Install Python Dependencies
 
-## ⚡ Usage
+```bash
+pip install -r requirements.txt
+```
 
-### 1. Run the app
+## Usage
+
+### Starting the Application
 
 ```bash
 python app.py
 ```
 
-The app will start a **local Gradio web server**, typically accessible at:
+The Gradio interface will launch in your browser at `http://localhost:7860`
+
+### Using the Interface
+
+1. **Model Setup** (first time only):
+   - Select a model (Q4 for faster, Q8 for higher quality)
+   - Click "Download" to download the model
+   - Click "Initialize" to load the model into memory
+
+2. **Generate Speech**:
+   - Enter the text you want to synthesize
+   - Upload a reference audio file (3-15 seconds, clean audio recommended)
+   - The reference text will auto-transcribe, or you can provide it manually
+   - (Optional) Set a seed for reproducible results
+   - Click "Generate Speech"
+
+3. **Model Management**:
+   - Use "Unload" to free up memory and switch between models
+
+## Model Options
+
+- **Q4 (Faster, Lower Quality)**: `neuphonic/neutts-air-q4-gguf`
+  - Faster inference
+  - Lower memory usage
+  - Good for testing and quick iterations
+
+- **Q8 (Slower, Higher Quality)**: `neuphonic/neutts-air-q8-gguf`
+  - Higher quality output
+  - More memory intensive
+  - Best for final production
+
+## Tips for Best Results
+
+- **Reference Audio**: Use 3-15 seconds of clean audio with minimal background noise
+- **Reference Text**: Should match the audio exactly (or leave empty for auto-transcription)
+- **Text Length**: The system automatically handles long texts by chunking and crossfading
+- **Seed**: Use the same seed for consistent results across generations
+
+## Project Structure
 
 ```
-http://127.0.0.1:7860
+.
+├── app.py                 # Main Gradio application
+├── neuttsair/
+│   ├── __init__.py
+│   └── neutts.py         # Core NeuTTS Air implementation
+├── requirements.txt       # Python dependencies
+└── README.md             # This file
 ```
 
-### 2. In the web interface:
+## Dependencies
 
-1. Select a model (Q4 or Q8)
-2. Click **📥 Download** → **🚀 Initialize**
-3. Upload a short **reference audio clip** (3–15 seconds)
-4. (Optional) Provide reference text — or leave blank for auto-transcription
-5. Enter new text to synthesize
-6. Click **🎵 Generate Speech**
+- `gradio` - Web interface
+- `torch` - Deep learning framework
+- `openai-whisper` - Audio transcription
+- `soundfile` - Audio I/O
+- `librosa` - Audio processing
+- `neucodec` - Neural audio codec
+- `phonemizer` - Text to phoneme conversion
+- `llama-cpp-python` - GGUF model support
+- `transformers` - HuggingFace models
+- `resemble-perth` - Audio processing utilities
 
----
+## License
 
-## 📦 Model Details
+See [LICENSE](LICENSE) file for details.
 
-| Model               | Repository                     | Description                       |
-| ------------------- | ------------------------------ | --------------------------------- |
-| Q4 (Faster)         | `neuphonic/neutts-air-q4-gguf` | Lower quality, faster inference   |
-| Q8 (Higher Quality) | `neuphonic/neutts-air-q8-gguf` | Slower, but more natural sounding |
+## Acknowledgments
 
-Models are automatically downloaded from the Hugging Face Hub using `snapshot_download`.
-
----
-
-## 🧠 How It Works
-
-* Loads **NeuTTS Air** for text-to-speech voice cloning
-* Loads **Whisper Tiny** for automatic reference transcription
-* Chunks long text intelligently at sentence boundaries
-* Applies **crossfading** between audio segments for smooth transitions
-* Outputs a high-quality `.wav` file at 24 kHz
-
----
-
-## 🧹 Cleanup
-
-Models and CUDA memory are automatically released when:
-
-* You click **Unload Model**
-* You close the Gradio app
-* You interrupt with `Ctrl + C`
-
----
-
-## 🧾 License
-
-This project is provided for **research and educational use**.
-Refer to the licenses of the included models (`neuphonic/neutts-air-*` and `openai/whisper`) for their respective terms.
-
----
-
-## 💡 Tips
-
-* Use **clean reference audio** with minimal background noise.
-* The **reference text** must match the spoken words in the reference clip for best results.
-* For long paragraphs, the app automatically splits and processes text seamlessly.
-
----
-
-
+- Built on [NeuTTS Air](https://huggingface.co/neuphonic) by Neuphonic
+- Uses [Whisper](https://github.com/openai/whisper) for transcription
+- Powered by [Gradio](https://gradio.app/) for the web interface
