@@ -5,6 +5,14 @@ import os
 import sys
 import platform
 from pathlib import Path
+import warnings
+import logging
+
+# Suppress redirect warning on Windows/MacOS
+warnings.filterwarnings("ignore", message="Redirects are currently not supported")
+os.environ["TORCH_DISTRIBUTED_DEBUG"] = "OFF"
+logging.getLogger("torch.distributed.elastic").setLevel(logging.ERROR)
+
 import torch
 import whisper
 import numpy as np
@@ -384,6 +392,7 @@ with gr.Blocks(
             input_text = gr.Textbox(
                 label="Text to Synthesize",
                 placeholder="Enter the text you want to convert to speech...",
+                value="Welcome to Voice Assistant 2.0! I'm faster, smarter, and a little more alive. If you hear breathing in your speaker, don't worry, it's just me practicing.",
                 lines=6
             )
             
