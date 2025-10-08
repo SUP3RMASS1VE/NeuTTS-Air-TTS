@@ -166,9 +166,9 @@ def initialize_models(model_choice):
         
         tts = NeuTTSAir(
             backbone_repo=repo_id,
-            backbone_device="gpu",
+            backbone_device="cuda" if torch.cuda.is_available() else "cpu",
             codec_repo="neuphonic/neucodec",
-            codec_device="cuda"
+            codec_device="cuda" if torch.cuda.is_available() else "cpu"
         )
         
         print("Loading Whisper Tiny for auto-transcription...")
