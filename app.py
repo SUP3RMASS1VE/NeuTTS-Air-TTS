@@ -397,7 +397,7 @@ with gr.Blocks(
             )
             
             ref_audio = gr.Audio(
-                label="Reference Audio",
+                label="Reference Audio (⚠️ Use 3-7 seconds to avoid OOM errors)",
                 type="filepath",
                 sources=["upload"]
             )
@@ -451,7 +451,7 @@ with gr.Blocks(
     with gr.Accordion("💡 Tips & Examples", open=False):
         gr.Markdown("""
         **Tips for best results:**
-        - Reference audio: 3-15 seconds, clean audio, minimal background noise
+        - Reference audio: 3-7 seconds, clean audio, minimal background noise
         - Reference text should match the audio exactly
         
         **Example texts to try:**
