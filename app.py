@@ -10,6 +10,11 @@ import logging
 
 # Suppress redirect warning on Windows/MacOS
 warnings.filterwarnings("ignore", message="Redirects are currently not supported")
+# Suppress torch weight_norm deprecation warning
+warnings.filterwarnings("ignore", category=FutureWarning, module="torch.nn.utils.weight_norm")
+# Suppress torch.load weights_only warning
+warnings.filterwarnings("ignore", message=".*TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD.*")
+warnings.filterwarnings("ignore", category=UserWarning, module="neucodec.model")
 os.environ["TORCH_DISTRIBUTED_DEBUG"] = "OFF"
 logging.getLogger("torch.distributed.elastic").setLevel(logging.ERROR)
 
@@ -172,12 +177,18 @@ def initialize_models(model_choice):
         repo_id = MODELS[model_choice]
         print(f"Initializing {model_choice}...")
         
-        tts = NeuTTSAir(
-            backbone_repo=repo_id,
-            backbone_device="cuda" if torch.cuda.is_available() else "cpu",
-            codec_repo="neuphonic/neucodec",
-            codec_device="cuda" if torch.cuda.is_available() else "cpu"
-        )
+        # Temporarily suppress stderr to hide llama.cpp context warnings
+        import io
+        import contextlib
+        
+        stderr_buffer = io.StringIO()
+        with contextlib.redirect_stderr(stderr_buffer):
+            tts = NeuTTSAir(
+                backbone_repo=repo_id,
+                backbone_device="cuda" if torch.cuda.is_available() else "cpu",
+                codec_repo="neuphonic/neucodec",
+                codec_device="cuda" if torch.cuda.is_available() else "cpu"
+            )
         
         print("Loading Whisper Tiny for auto-transcription...")
         whisper_model = whisper.load_model("tiny", device="cuda" if torch.cuda.is_available() else "cpu")
