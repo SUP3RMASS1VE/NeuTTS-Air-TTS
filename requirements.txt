@@ -4,7 +4,7 @@ phonemizer==3.3.0
 soundfile==0.13.1
 transformers==4.56.1
 resemble-perth==1.0.1
-gradio>=4.0.0
+gradio==5.50.0
 llama-cpp-python
 onnxruntime-gpu
 openai-whisper
