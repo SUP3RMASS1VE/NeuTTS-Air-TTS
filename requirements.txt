@@ -8,3 +8,4 @@ gradio==5.50.0
 llama-cpp-python
 onnxruntime-gpu
 openai-whisper
+datasets==2.19.1
